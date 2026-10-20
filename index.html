@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IELTS Speaking Practice — AI Assessment</title>
+<style>
+:root{--navy:#14213d;--blue:#2855c5;--ink:#172033;--muted:#647089;--line:#e3e8f0;--bg:#f4f7fb;--white:#fff;--green:#16794b;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+header{background:linear-gradient(120deg,#14213d,#2855c5);color:#fff;padding:26px 18px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}header .wrap{padding:0 16px}
+.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:.75rem;font-weight:800;opacity:.82}
+h1{font-size:clamp(1.65rem,4vw,2.45rem);line-height:1.15;margin:.35rem 0 .55rem}header p{margin:0;max-width:720px;color:#e2eaff}
+main{padding:22px 0 52px}.layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:18px;align-items:start}
+.panel,.card{background:var(--white);border:1px solid var(--line);border-radius:16px;box-shadow:0 5px 20px #14213d08}
+.panel{padding:16px;position:sticky;top:16px}.card{padding:22px}
+label{display:block;font-weight:700;font-size:.9rem;margin-bottom:6px}input[type=text],textarea,select{width:100%;border:1px solid #cfd7e5;border-radius:10px;padding:11px 12px;font:inherit;color:var(--ink);background:#fff}
+textarea{min-height:150px;resize:vertical}.field{margin-bottom:14px}
+.steps{display:grid;gap:8px;margin:16px 0}.step{width:100%;border:1px solid var(--line);border-radius:10px;background:#fff;text-align:left;padding:11px 12px;cursor:pointer;font:inherit;color:var(--ink)}.step.active{border-color:var(--blue);background:#eef3ff;color:#173d9a;font-weight:800}.step small{display:block;color:var(--muted);font-weight:500}
+.progress{height:6px;background:#e8edf5;border-radius:8px;overflow:hidden;margin:10px 0 15px}.progress span{display:block;height:100%;width:0;background:var(--blue);transition:width .2s}
+.tag{display:inline-flex;padding:4px 9px;border-radius:100px;background:#edf2ff;color:#2348a5;font-size:.78rem;font-weight:800}
+h2{font-size:1.45rem;margin:.6rem 0}.question{border:1px solid var(--line);background:#fafcff;padding:14px;border-radius:12px;margin:12px 0}.question strong{display:block;margin-bottom:4px}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:10px 14px;font-weight:800}
+.primary{background:var(--blue);color:#fff}.secondary{background:#edf1f7;color:#27334c}.outline{background:#fff;border:1px solid #cfd7e5;color:#27334c}.danger{background:#fff0ef;color:var(--red)}
+button:disabled{opacity:.45;cursor:not-allowed}.muted{color:var(--muted);font-size:.9rem}.status{margin-top:10px;font-size:.9rem;color:var(--muted)}.status.error{color:var(--red)}.status.good{color:var(--green)}
+.timer{font-variant-numeric:tabular-nums;font-size:1.6rem;font-weight:900;letter-spacing:.03em}
+.result{margin-top:18px}.scoregrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.score{border:1px solid var(--line);border-radius:12px;padding:14px}.score .num{font-size:1.8rem;font-weight:900;color:var(--blue)}.score h3{font-size:.94rem;margin:0}.result h3{margin-bottom:6px}.result section{border-top:1px solid var(--line);padding:14px 0}.result ul{padding-left:20px}.notice{background:#fff8e8;border:1px solid #f2dfae;border-radius:12px;padding:12px 14px;font-size:.9rem}
+.hidden{display:none!important}.transcript-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}.pill{font-size:.8rem;background:#f0f3f8;border-radius:99px;padding:4px 8px}
+footer{text-align:center;color:var(--muted);font-size:.82rem;padding:0 16px 24px}
+@media(max-width:760px){.layout{grid-template-columns:1fr}.panel{position:static}.scoregrid{grid-template-columns:1fr}.card{padding:16px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="eyebrow">Speaking practice studio</div><h1>IELTS Speaking Practice</h1><p>Complete Part 1, Part 2 and Part 3 practice with speech-to-text and AI feedback on your transcript.</p></div></header>
+<main class="wrap">
+<div class="layout">
+<aside class="panel">
+  <div class="field"><label for="candidate">Candidate name (optional)</label><input id="candidate" type="text" placeholder="Enter name"></div>
+  <div class="field"><label for="candidateId">Candidate ID (optional)</label><input id="candidateId" type="text" placeholder="Enter ID"></div>
+  <div class="tag" id="partTag">PART 1</div>
+  <div class="progress"><span id="progressBar"></span></div>
+  <div class="steps">
+    <button class="step active" data-part="0">Part 1 — Introduction<small>Short personal questions</small></button>
+    <button class="step" data-part="1">Part 2 — Long turn<small>Preparation + 1–2 minute talk</small></button>
+    <button class="step" data-part="2">Part 3 — Discussion<small>Developed answers</small></button>
+  </div>
+  <p class="muted">Use a quiet place and allow microphone access. Your browser's speech recognition must be supported for live transcription.</p>
+</aside>
+<section class="card">
+  <div id="testArea">
+    <div class="muted" id="partSubtitle">Introduction and interview · 4–5 minutes</div>
+    <h2 id="partTitle">Part 1: Getting to know you</h2>
+    <div id="questionArea"></div>
+    <div id="cueArea" class="hidden"></div>
+    <div class="field">
+      <label for="transcript">Your answer / transcript</label>
+      <textarea id="transcript" placeholder="Your speech transcript will appear here if supported. You can also type or correct it manually."></textarea>
+      <div class="transcript-tools">
+        <button id="startSpeech" class="secondary" type="button">🎙 Start speech-to-text</button>
+        <button id="stopSpeech" class="outline" type="button" disabled>Stop transcription</button>
+        <span id="speechStatus" class="pill">Not recording</span>
+      </div>
+      <p class="muted">Speech-to-text uses your browser's recognition service when available. Check and edit the transcript before assessment. Audio itself is not sent to OpenRouter.</p>
+    </div>
+    <div class="actions">
+      <button id="prevBtn" class="outline" type="button">Previous part</button>
+      <button id="nextBtn" class="primary" type="button">Next part</button>
+      <button id="assessBtn" class="secondary" type="button">Assess this answer with AI</button>
+      <button id="fullAssessBtn" class="primary" type="button">Assess complete test</button>
+    </div>
+    <div id="status" class="status" role="status"></div>
+  </div>
+  <div id="results" class="result hidden"></div>
+</section>
+</div>
+</main>
+<footer>Practice tool only. AI feedback is an estimate, not an official IELTS score. No pronunciation scoring is performed.</footer>
+<script>
+const parts = [
+ {tag:"PART 1",title:"Part 1: Getting to know you",subtitle:"Introduction and interview · 4–5 minutes",qs:[
+  ["Hometown","Where is your hometown?"],
+  ["Hometown","What do you like most about the place where you live?"],
+  ["Hometown","Has your hometown changed much in recent years?"],
+  ["Free time","What do you usually do in your free time?"],
+  ["Free time","Do you prefer spending your free time alone or with other people? Why?"],
+  ["Free time","Is there a hobby you would like to take up in the future?"]
+ ],cue:null},
+ {tag:"PART 2",title:"Part 2: Individual long turn",subtitle:"1 minute to prepare · Speak for 1–2 minutes",qs:[],cue:{title:"Describe a book or a film that you enjoyed.",bullets:["what the book or film was","when you read or watched it","what it was about","and explain why you enjoyed it"],prep:60,talk:120}},
+ {tag:"PART 3",title:"Part 3: Discussion",subtitle:"Two-way discussion · 4–5 minutes",qs:[
+  ["Books and films","Why do some people prefer films to books?"],
+  ["Books and films","How can books and films influence young people?"],
+  ["Education and technology","Do you think people read less nowadays than in the past?"],
+  ["Education and technology","How has technology changed the way people learn?"],
+  ["Culture","Should governments spend money supporting films and literature? Why or why not?"]
+ ],cue:null}
+];
+let current=0, recognition=null, listening=false, prepInterval=null, talkInterval=null, remaining=0;
+const $=id=>document.getElementById(id);
+function renderPart(){
+ const p=parts[current]; $("partTag").textContent=p.tag;$("partTitle").textContent=p.title;$("partSubtitle").textContent=p.subtitle;
+ $("progressBar").style.width=((current+1)/3*100)+"%";
+ document.querySelectorAll(".step").forEach((b,i)=>b.classList.toggle("active",i===current));
+ $("questionArea").innerHTML=p.qs.map((q,i)=>`<div class="question"><strong>${i+1}. ${q[0]}</strong>${q[1]}</div>`).join("");
+ $("cueArea").classList.toggle("hidden",!p.cue);
+ if(p.cue){$("cueArea").innerHTML=`<div class="question"><span class="tag">CUE CARD</span><h3>${p.cue.title}</h3><p>You should say:</p><ul>${p.cue.bullets.map(b=>`<li>${b}</li>`).join("")}</ul><p>and explain why you enjoyed it.</p><div class="timer" id="timer">01:00</div><div class="actions"><button class="secondary" id="prepBtn" type="button">Start 1-minute preparation</button><button class="secondary" id="talkBtn" type="button">Start 2-minute talk timer</button><button class="outline" id="resetTimer" type="button">Reset timers</button></div></div>`;
+ $("prepBtn").onclick=()=>startTimer(60);$("talkBtn").onclick=()=>startTimer(120);$("resetTimer").onclick=()=>{clearInterval(prepInterval);clearInterval(talkInterval);$("timer").textContent="01:00";};}
+ $("prevBtn").disabled=current===0;$("nextBtn").disabled=current===2;$("status").textContent="";
+ $("transcript").value=localStorage.getItem("transcript"+current)||"";
+}
+function startTimer(seconds){clearInterval(prepInterval);clearInterval(talkInterval);remaining=seconds;updateTimer();const timer=setInterval(()=>{remaining--;updateTimer();if(remaining<=0)clearInterval(timer)},1000);if(seconds===60)prepInterval=timer;else talkInterval=timer}
+function updateTimer(){const el=$("timer");if(el)el.textContent=String(Math.floor(remaining/60)).padStart(2,"0")+":"+String(remaining%60).padStart(2,"0")}
+function stopRecognition(){if(recognition){try{recognition.stop()}catch(e){}}listening=false;$("startSpeech").disabled=false;$("stopSpeech").disabled=true;$("speechStatus").textContent="Stopped"}
+function startRecognition(){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){$("speechStatus").textContent="Not supported";$("status").className="status error";$("status").textContent="Speech recognition is not available in this browser. Try current Chrome or type/paste your transcript.";return}
+ recognition=new SR();recognition.lang="en-US";recognition.continuous=true;recognition.interimResults=true;
+ recognition.onstart=()=>{listening=true;$("startSpeech").disabled=true;$("stopSpeech").disabled=false;$("speechStatus").textContent="Listening…";$("status").textContent="Speak naturally. Your transcript will appear below."};
+ recognition.onresult=e=>{let finalText="", interim="";for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)finalText+=t+" ";else interim+=t}
+ if(finalText){const ta=$("transcript");ta.value=(ta.value+" "+finalText).trim();localStorage.setItem("transcript"+current,ta.value)}
+ $("speechStatus").textContent=interim?"Hearing: "+interim.slice(0,45):"Transcribing…"};
+ recognition.onerror=e=>{$("speechStatus").textContent="Speech error: "+e.error;stopRecognition()};
+ recognition.onend=()=>{if(listening){try{recognition.start()}catch(e){stopRecognition()}}else{ $("startSpeech").disabled=false;$("stopSpeech").disabled=true}};
+ try{recognition.start()}catch(e){$("status").textContent="Could not start speech recognition. Check microphone permission."}
+}
+function gatherTranscript(){localStorage.setItem("transcript"+current,$("transcript").value);return $("transcript").value.trim()}
+async function assess(all){
+ if(listening)stopRecognition();
+ const transcript=gatherTranscript();
+ let payload;
+ if(all){
+   const answers=parts.map((p,i)=>({part:p.tag,questions:p.qs.map(q=>q[1]),cue:p.cue?p.cue.title:null,transcript:i===current?transcript:(localStorage.getItem("transcript"+i)||"")}));
+   const empty=answers.every(a=>!a.transcript.trim());
+   if(empty){$("status").className="status error";$("status").textContent="Please record or enter at least one answer before assessment.";return}
+   payload={mode:"complete",candidate:$("candidate").value,candidateId:$("candidateId").value,answers};
+ }else{
+   if(!transcript){$("status").className="status error";$("status").textContent="Please record or enter a transcript first.";return}
+   payload={mode:"single",candidate:$("candidate").value,candidateId:$("candidateId").value,part:parts[current].tag,questions:parts[current].qs.map(q=>q[1]),cue:parts[current].cue?parts[current].cue.title:null,transcript};
+ }
+ $("assessBtn").disabled=true;$("fullAssessBtn").disabled=true;$("status").className="status";$("status").textContent="Sending transcript for AI assessment…";
+ try{
+  const res=await fetch("/api/assess-speaking",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+  const data=await res.json();if(!res.ok)throw new Error(data.error||"Assessment failed");
+  renderResults(data,payload.mode);$("results").classList.remove("hidden");$("testArea").classList.add("hidden");
+ }catch(e){$("status").className="status error";$("status").textContent="Assessment error: "+e.message}
+ finally{$("assessBtn").disabled=false;$("fullAssessBtn").disabled=false}
+}
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function list(items){return (items||[]).map(x=>`<li>${escapeHtml(typeof x==="string"?x:(x.original?x.original+" → "+x.improved+" — "+(x.explanation||""):JSON.stringify(x)))}</li>`).join("")}
+function renderResults(d,mode){
+ const criteria=d.criteria||{};
+ $("results").innerHTML=`<button class="outline" id="backToTest">← Back to test</button><h2>AI Speaking Feedback</h2><p class="muted">Candidate: ${escapeHtml(d.candidate||"Not provided")} · ${escapeHtml(mode==="complete"?"Complete test":"Part assessment")}</p>
+ <div class="notice">This is an unofficial, transcript-based practice estimate. Pronunciation is not assessed. Fluency can only be estimated from wording and answer development; pauses, speed and delivery are not reliably measured from text.</div>
+ <div class="scoregrid">${["fluency_coherence","lexical_resource","grammatical_range_accuracy"].map(k=>`<div class="score"><h3>${escapeHtml((criteria[k]||{}).label||k.replaceAll("_"," "))}</h3><div class="num">${escapeHtml((criteria[k]||{}).band??"—")}</div><div class="muted">${escapeHtml((criteria[k]||{}).summary||"")}</div></div>`).join("")}</div>
+ <section><h3>Estimated practice average</h3><div class="num" style="font-size:2rem;font-weight:900">${escapeHtml(d.estimated_average??"—")}</div><p class="muted">Average of the three requested criteria only. Not an official IELTS Speaking band.</p></section>
+ <section><h3>What you did well</h3><ul>${list(d.strengths)}</ul></section>
+ <section><h3>Grammar corrections</h3><ul>${list(d.grammar_corrections)}</ul></section>
+ <section><h3>Vocabulary improvements</h3><ul>${list(d.vocabulary_suggestions)}</ul></section>
+ <section><h3>Personalized action plan</h3><ul>${list(d.action_plan)}</ul></section>
+ <section><h3>Overall feedback</h3><p>${escapeHtml(d.overall_feedback||"")}</p></section>
+ <div class="actions"><button class="primary" id="printBtn">Print / Save as PDF</button><button class="secondary" id="newAssess">Back to speaking test</button></div>`;
+ $("backToTest").onclick=$("newAssess").onclick=()=>{$("results").classList.add("hidden");$("testArea").classList.remove("hidden")};$("printBtn").onclick=()=>window.print();
+}
+document.querySelectorAll(".step").forEach(b=>b.addEventListener("click",()=>{current=Number(b.dataset.part);renderPart()}));
+$("prevBtn").onclick=()=>{if(current>0){current--;renderPart()}};
+$("nextBtn").onclick=()=>{if(current<2){current++;renderPart()}};
+$("transcript").addEventListener("input",()=>localStorage.setItem("transcript"+current,$("transcript").value));
+$("startSpeech").onclick=startRecognition;$("stopSpeech").onclick=stopRecognition;
+$("assessBtn").onclick=()=>assess(false);$("fullAssessBtn").onclick=()=>assess(true);
+renderPart();
+</script>
+</body>
+</html>
